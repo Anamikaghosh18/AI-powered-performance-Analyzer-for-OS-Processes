@@ -46,6 +46,22 @@ def network(network_usage, bars = 50):
 
 previous_net = psutil.net_io_counters().bytes_recv + psutil.net_io_counters().bytes_sent
 
+
+def all_processes(all_processes_usage):
+    # This function will show all the processes running in the system
+    for process in psutil.process_iter():
+        try:
+            process_name = process.name()
+            process_id = process.pid
+            process_status = process.status()
+            process_username = process.username()
+            process_memory = process.memory_info().rss
+            process_cpu = process.cpu_percent()
+            print(f"Process Name: {process_name} | Process ID: {process_id} | Process Status: {process_status} | Process Username: {process_username} | Process Memory: {process_memory} | Process CPU: {process_cpu}")
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+
 # calculate the usage in every 1 sec
 while True:
         cpu(psutil.cpu_percent())
@@ -62,5 +78,7 @@ while True:
         usage_net = current_net - previous_net
         previous_net = current_net
         network(usage_net, 50)
+        # to show all processes running in the system
+        all_processes(psutil.process_iter())
         print("\n" + "-" * 50)
         time.sleep(1)
